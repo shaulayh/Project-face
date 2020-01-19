@@ -8,13 +8,6 @@ class Database {
 
     private Person person;
 
-    //    public int code;
-//    public String firstName;
-//
-//    public String lastName;
-//    public int reg;
-//    public int age;
-//    public String sec;
     private Connection connection;
 
     private TerminalMonitor terminalMonitor = TerminalMonitor.getInstance();
@@ -40,7 +33,6 @@ class Database {
             }
 
         } catch (ClassNotFoundException e) {
-//            System.out.println(e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -105,7 +97,7 @@ class Database {
         return user;
     }
 
-    public void db_close() throws SQLException {
+    public void db_close() {
         try {
             connection.close();
         } catch (SQLException | NullPointerException e) {

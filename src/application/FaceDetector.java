@@ -33,7 +33,7 @@ public class FaceDetector implements Runnable {
     private Java2DFrameConverter paintConverter = new Java2DFrameConverter();
     private ArrayList<String> output = new ArrayList<>();
 
-//    private Exception exception = null;
+
 
     private int count = 0;
     public String classifierName;

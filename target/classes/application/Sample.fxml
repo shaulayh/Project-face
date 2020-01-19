@@ -117,7 +117,8 @@
                     </Label>
                     <TextField fx:id="occupation" layoutX="96.0" layoutY="165.0" prefHeight="25.0" prefWidth="181.0"/>
                     <Separator layoutX="34.0" layoutY="33.0" prefHeight="6.0" prefWidth="239.0"/>
-                    <Button alignment="CENTER" layoutX="90.0" layoutY="200.0" onAction="#saveFace" prefHeight="26.0"
+                    <Button fx:id="saveBtn2" alignment="CENTER" layoutX="90.0" layoutY="200.0"
+                            onAction="#takeFiveCaption" prefHeight="26.0"
                             prefWidth="119.0" text="Save"/>
                 </VBox>
             </AnchorPane>

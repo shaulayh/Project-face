@@ -63,6 +63,12 @@ public class SampleController {
     private Button stopRecBtn;
 
     /**
+     * button to stop the recognition
+     */
+    @FXML
+    private Button saveBtn2;
+
+    /**
      * imageview to display the image live
      */
     @FXML
@@ -72,10 +78,6 @@ public class SampleController {
      * data panel
      */
     @FXML
-
-    /**
-     * data pane for data
-     */
     private TitledPane dataPane;
     /**
      * input field for first name
@@ -143,7 +145,7 @@ public class SampleController {
     private Database database = new Database();        //Creating Database object
 
     /**
-     *  user list
+     * user list
      */
     ArrayList<String> user = new ArrayList<>();
 
@@ -153,7 +155,7 @@ public class SampleController {
     private ImageView imageView;
     /**
      * event  longs
-      */
+     */
     public static ObservableList<String> event = FXCollections.observableArrayList();
     /**
      * output event logs
@@ -173,10 +175,14 @@ public class SampleController {
      * terminal collector info
      */
     private TerminalMonitor terminalMonitor = TerminalMonitor.getInstance();
-
+    /**
+     * number of captions for recognition
+     */
+    static int repeat = 10;
 
     /**
      * log information to terminal
+     *
      * @param data to be log
      */
     public void terminalLog(String data) {
@@ -190,11 +196,13 @@ public class SampleController {
         logList.setItems(event);
     }
 
+    /**
+     *  start camera live
+     * @throws SQLException when the database error occurs
+     */
     @FXML
     protected void startCamera() throws SQLException {
 
-        //*******************************************************************************************
-        //initializing objects from start camera button event
         faceDetector.init();
         faceDetector.setFrame(frame);
         faceDetector.start();
@@ -214,6 +222,7 @@ public class SampleController {
 
         //*******************************************************************************************
         //Activating other buttons
+
         code.setText(String.valueOf(Integer.parseInt(String.valueOf(randomGenerator.getRandomCode()))));
         startCam.setVisible(false);
         stopBtn.setVisible(true);
@@ -317,6 +326,11 @@ public class SampleController {
 
     }
 
+    @FXML
+    protected void takeFiveCaption() {
+        saveFace();
+    }
+
 
     @FXML
     protected void saveFace() {
@@ -346,7 +360,8 @@ public class SampleController {
             pb.setVisible(true);
 
             savedLabel.setVisible(true);
-
+            repeat--;
+            saveBtn2.setText("Save-" + repeat);
             new Thread(() -> {
                 try {
 
@@ -367,9 +382,9 @@ public class SampleController {
                     person.setOccupation(occupation.getText());
                     person.setReg(Integer.parseInt(reg.getText()));
 
-                    code.setText("");
-                    firstName.setText("");
-                    lastName.setText("");
+//                    code.setText("");
+//                    firstName.setText("");
+//                    lastName.setText("");
                     database.insert(person);
 
                     Platform.runLater(() -> pb.setProgress(100));
@@ -377,6 +392,10 @@ public class SampleController {
 
                     savedLabel.setVisible(true);
                     Thread.sleep(2000);
+                    if (repeat < 1) {
+                        saveBtn2.setDisable(true);
+                        saveBtn.setDisable(true);
+                    }
 
                     Platform.runLater(() -> pb.setVisible(false));
 
@@ -390,11 +409,6 @@ public class SampleController {
 
             }).start();
             faceDetector.setSaveFace(true);
-            try {
-                stopCam();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
     }

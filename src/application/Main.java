@@ -14,17 +14,18 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    Scene primaryScene, SecondaryScene;
-
+    Scene SecondaryScene;
+    private TerminalMonitor terminalMonitor = TerminalMonitor.getInstance();
 
     /**
-     *  method to start the application
+     * method to start the application
+     *
      * @param primaryStage the main window/stage
      */
     @Override
     public void start(Stage primaryStage) {
         try {
-            BorderPane root = (BorderPane) FXMLLoader.load(getClass().getResource("Sample.fxml"));
+            BorderPane root = FXMLLoader.load(getClass().getResource("Sample.fxml"));
             Scene scene = new Scene(root, 1350, 720);
 
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
@@ -33,22 +34,20 @@ public class Main extends Application {
             Button buttonNavigate = new Button("Go to next");
 
 
-            buttonNavigate.setOnAction(e -> {
-                primaryStage.setScene(SecondaryScene);
-            });
+            buttonNavigate.setOnAction(e -> primaryStage.setScene(SecondaryScene));
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e) {
+            terminalMonitor.addNewMessage(e.getMessage());
         }
     }
 
     /**
-     *  the entry point of the application
+     * the entry point of the application
+     *
      * @param args parameters passed into the system
      */
     public static void main(String[] args) {
         launch(args);
-
-
     }
 }
