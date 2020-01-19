@@ -24,13 +24,29 @@ import static org.bytedeco.javacpp.opencv_imgproc.cvtColor;
  * @version 1.0
  */
 public class FaceRecognizer {
-
+    /**
+     * face recognizer using the LBPH
+     */
     private LBPHFaceRecognizer faceRecognizer;
-
+    /**
+     * access the root of the application
+     */
     private File root;
+    /**
+     * images using mat vector
+     */
     private MatVector images;
+
+    /**
+     * getting the labels
+     */
     private Mat labels;
 
+
+    /**
+     * initializing the  class
+     * extraction the images from the local folder and intiliazing the recognition process
+     */
     public void init() {
         // mention the directory the faces has been saved
         String trainingFolder = "./faces";
@@ -55,66 +71,38 @@ public class FaceRecognizer {
 
         for (File image : imageFiles) {
             Mat img = imread(image.getAbsolutePath(), CV_LOAD_IMAGE_GRAYSCALE);
-
-            // extracting unique face code from the face image names
-			/*
-			this unique face will be used to fetch all other information from
-			I dont put face data on database.
-			I just store face indexes on database.
-
-			For example:
-			When you train a new face to the system suppose person named ABC.
-			Now this person named ABC has 10(can be more or less)  face image which
-			will be saved in the project folder named "/Faces" using a naming convention such as
-			1_ABC1.jpg
-			1_ABC2.jpg
-			1_ABC3.jpg
-			.......
-			1_ABC10.jpg
-		
-			The initial value of the file name is the index key in the database table of that person.
-			the key 1 will be used to fetch data from database.
- 
-			*/
             int label = Integer.parseInt(image.getName().split("-")[0]);
-
             images.put(counter, img);
-
             labelsBuf.put(counter, label);
 
             counter++;
         }
 
-        // face training
-        //this.faceRecognizer = createLBPHFaceRecognizer();
         this.faceRecognizer = createLBPHFaceRecognizer();
-
         this.faceRecognizer.train(images, labels);
-
     }
 
+    /**
+     * recognition method
+     *
+     * @param faceData pass the image to be recognize
+     * @return the predict label
+     */
     public int recognize(IplImage faceData) {
-
         Mat faces = cvarrToMat(faceData);
 
         cvtColor(faces, faces, CV_BGR2GRAY);
 
         IntPointer label = new IntPointer(1);
-        DoublePointer confidence = new DoublePointer(0);
-
-
-        this.faceRecognizer.predict(faces, label, confidence);
-
-
+        DoublePointer confidenceLevel = new DoublePointer(0);
+        this.faceRecognizer.predict(faces, label, confidenceLevel);
         int predictedLabel = label.get(0);
-
         //Confidence value less than 60 means face is known
         //Confidence value greater than 60 means face is unknown
-        if (confidence.get(0) > 60) {
+        if (confidenceLevel.get(0) > 60) {
             return -1;
         }
 
         return predictedLabel;
-
     }
 }

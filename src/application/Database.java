@@ -57,7 +57,6 @@ class Database {
             statement.setString(2, person.getFirstName());
             statement.setString(3, person.getLastName());
             statement.setInt(4, person.getReg());
-            statement.setInt(5, person.getAge());
             statement.setString(6, person.getOccupation());
 
             int rowsInserted = statement.executeUpdate();

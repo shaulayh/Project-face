@@ -7,20 +7,31 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.Random;
 
+/**
+ * @author Azeez G. Shola
+ * @version 1.0
+ */
 public class RandomGenerator {
 
 
-    public static void main(String[] args) {
-//        getRandomCode();
-    }
-
-
+    /**
+     * generating new random number integer
+     *
+     * @return random number of integer
+     */
     public static int getRandom() {
 
         Random rd = new Random(); // creating Random object
         return rd.nextInt(Integer.MAX_VALUE) + 1;
     }
 
+
+    /**
+     * to make sure number is not repeated, each number must
+     * be distinct
+     *
+     * @return random number without repeat
+     */
     public int getRandomCode() {
 
         ArrayList<Integer> codes = new ArrayList<>();

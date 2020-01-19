@@ -302,6 +302,9 @@ public class SampleController {
 
     }
 
+    /**
+     * stop the recognition process
+     */
     @FXML
     protected void stopRecognise() {
 
@@ -327,6 +330,9 @@ public class SampleController {
     }
 
 
+    /**
+     * save face to the system
+     */
     @FXML
     protected void saveFace() {
         if (isValidatedForm()) {

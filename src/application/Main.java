@@ -13,8 +13,13 @@ import javafx.stage.Stage;
  * @version 1.0
  */
 public class Main extends Application {
-
+    /**
+     * secondary scene useful for navigation
+     */
     Scene SecondaryScene;
+    /**
+     * terminal monitor
+     */
     private TerminalMonitor terminalMonitor = TerminalMonitor.getInstance();
 
     /**
