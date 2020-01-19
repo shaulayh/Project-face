@@ -4,15 +4,10 @@
 .start_cam {
 
     -fx-min-height: 60px;
-
     -fx-min-width: 90px;
-
-    -fx-background-image: url("../camera.png");
-
     -fx-background-size: 50px 50px;
-
     -fx-background-repeat: no-repeat;
-
+    -fx-background-image: url("../camera.png");
     -fx-background-position: center 7px;
 }
 

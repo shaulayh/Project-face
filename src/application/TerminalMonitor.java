@@ -24,10 +24,6 @@ public class TerminalMonitor {
         return single_instance;
     }
 
-    public void setToPrintInTerminal(ArrayList<String> toPrintInTerminal) {
-        this.toPrintInTerminal = toPrintInTerminal;
-    }
-
     public void addNewMessage(String message) {
         toPrintInTerminal.add(message);
     }

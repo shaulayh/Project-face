@@ -357,7 +357,7 @@ public class SampleController {
                 try {
 
                     Person person = new Person();
-                    System.out.println(" check if is still new " + person);
+//                    System.out.println(" check if is still new " + person);
                     // enter the face to training  data
                     faceDetector.setFirstName(firstName.getText());
                     faceDetector.setLastName(lastName.getText());

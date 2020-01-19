@@ -34,7 +34,6 @@ public class FaceDetector implements Runnable {
     private ArrayList<String> output = new ArrayList<>();
 
 
-
     private int count = 0;
     public String classifierName;
     public File classifierFile;
@@ -116,7 +115,7 @@ public class FaceDetector implements Runnable {
 
                 storage = CvMemStorage.create();
             } catch (Exception e) {
-                System.out.println("error occured here" + e);
+                terminalMonitor.addNewMessage("error occurred here" + e);
                 if (grabber != null)
                     grabber.release();
                 grabber = new OpenCVFrameGrabber(0);
@@ -136,7 +135,6 @@ public class FaceDetector implements Runnable {
             boolean fetching = true;
 
             while (!stop && fetching && (count < 15)) {
-                System.out.println(count);
                 try {
                     fetching = ((grabbedImage = grabberConverter.convert(grabber.grab())) != null);
 
@@ -155,7 +153,7 @@ public class FaceDetector implements Runnable {
                     try {
                         temp = cvCreateImage(cvGetSize(grabbedImage), grabbedImage.depth(), grabbedImage.nChannels());
                     } catch (RuntimeException ex) {
-                        System.out.println("the exception incase of error " + ex.getMessage());
+                        terminalMonitor.addNewMessage("the exception in case of error " + ex.getMessage());
                     }
 
 
@@ -169,7 +167,7 @@ public class FaceDetector implements Runnable {
                     try {
                         faces = cvHaarDetectObjects(smallImage, classifier, storage, 1.1, 3, CV_HAAR_DO_CANNY_PRUNING);
                     } catch (Exception ex) {
-                        System.out.println("Error with face detection " + ex.getMessage());
+                        terminalMonitor.addNewMessage("Error with face detection " + ex.getMessage());
 
                     }
                     CvPoint org = null;
