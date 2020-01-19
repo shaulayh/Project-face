@@ -1,0 +1,88 @@
+/* JavaFX CSS - Leave this comment until you have at least create one rule which uses -fx-Property */
+
+
+.start_cam {
+
+    -fx-min-height: 60px;
+
+    -fx-min-width: 90px;
+
+    -fx-background-image: url("../camera.png");
+
+    -fx-background-size: 50px 50px;
+
+    -fx-background-repeat: no-repeat;
+
+    -fx-background-position: center 7px;
+}
+
+#save_face {
+
+    -fx-min-height: 50px;
+
+    -fx-min-width: 100px;
+
+
+    -fx-background-image: url("../save-face.png");
+
+    -fx-background-size: 50px 50px;
+
+    -fx-background-repeat: no-repeat;
+
+    -fx-background-position: center 7px;
+}
+
+.recognition {
+    -fx-min-height: 50px;
+
+    -fx-min-width: 100px;
+
+    -fx-background-image: url("../logo-15.png");
+
+    -fx-background-size: 50px 50px;
+
+    -fx-background-repeat: no-repeat;
+
+    -fx-background-position: center 7px;
+}
+
+
+.stop_recognition {
+
+    -fx-min-height: 50px;
+
+    -fx-min-width: 100px;
+
+
+    -fx-background-image: url("../stop.png");
+
+    -fx-background-size: 50px 50px;
+
+    -fx-background-repeat: no-repeat;
+
+    -fx-background-position: center 7px;
+}
+
+.stop_cam {
+
+    -fx-min-height: 50px;
+
+    -fx-min-width: 100px;
+
+
+    -fx-background-image: url("../stop.png");
+
+    -fx-background-size: 50px 50px;
+
+    -fx-background-repeat: no-repeat;
+
+    -fx-background-position: center 7px;
+}
+
+
+
+
+
+
+
+
