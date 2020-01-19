@@ -142,12 +142,12 @@ public class SampleController {
     /**
      * database object to store person information
      */
-    private Database database = new Database();        //Creating Database object
+    private Database database = new Database();
 
     /**
      * user list
      */
-    ArrayList<String> user = new ArrayList<>();
+    ArrayList<String> faces = new ArrayList<>();
 
     /**
      * display images
@@ -169,7 +169,7 @@ public class SampleController {
     /**
      * validating database
      */
-    public boolean isDbReady = false;
+    public boolean isDatabaseReady = false;
 
     /**
      * terminal collector info
@@ -179,6 +179,11 @@ public class SampleController {
      * number of captions for recognition
      */
     static int repeat = 10;
+    /**
+     * progress bar to show infor
+     */
+    @FXML
+    public ProgressBar progressBar;
 
     /**
      * log information to terminal
@@ -197,7 +202,8 @@ public class SampleController {
     }
 
     /**
-     *  start camera live
+     * start camera live
+     *
      * @throws SQLException when the database error occurs
      */
     @FXML
@@ -212,23 +218,20 @@ public class SampleController {
                 terminalLog(data);
             }
         } else {
-            isDbReady = true;
+            isDatabaseReady = true;
             terminalLog("Success: Database Connection Successful ! ");
 
             for (String data : terminalMonitor.getToPrintInTerminal()) {
                 terminalLog(data);
             }
         }
-
-        //*******************************************************************************************
-        //Activating other buttons
-
+        // set the code to random value and deactivate the textfield
         code.setText(String.valueOf(Integer.parseInt(String.valueOf(randomGenerator.getRandomCode()))));
         startCam.setVisible(false);
         stopBtn.setVisible(true);
         saveBtn.setDisable(false);
 
-        if (isDbReady) {
+        if (isDatabaseReady) {
             recogniseBtn.setDisable(false);
         }
 
@@ -243,7 +246,7 @@ public class SampleController {
         File folder = new File(path);
         File[] listOfFiles = folder.listFiles();
 
-        //Image reader from the mentioned folder
+        // Read image from faces folder
         assert listOfFiles != null;
         for (final File file : listOfFiles) {
             imageView = createImageView(file);
@@ -255,56 +258,45 @@ public class SampleController {
 
     int count = 0;
 
+    /**
+     * start face recognition process, and store the data
+     */
     @FXML
     protected void faceRecognise() {
 
-
         faceDetector.setIsRecFace(true);
-
-
         recogniseBtn.setText("Get Face Data");
 
         //Getting detected faces
-        user = faceDetector.getOutput();
+        faces = faceDetector.getOutput();
 
-        if (user.size() > 0) {
-            String temp = "********* Face Result: " + user.get(1) + " " + user.get(2) + " *********";
+        if (faces.size() > 0) {
+            String temp = "********* Face Result: " + faces.get(1) + " " + faces.get(2) + " *********";
             outEvent.add(temp);
 
-            String n1 = "First Name\t\t:\t" + user.get(1);
-
-            outEvent.add(n1);
-
+            String firstName = "First Name\t\t:\t" + faces.get(1);
+            outEvent.add(firstName);
             output.setItems(outEvent);
 
-            String n2 = "Last Name\t\t:\t" + user.get(2);
-
-            outEvent.add(n2);
-
+            String lastName = "Last Name\t\t:\t" + faces.get(2);
+            outEvent.add(lastName);
             output.setItems(outEvent);
 
-            String fc = "Face Code\t\t:\t" + user.get(0);
-
-            outEvent.add(fc);
-
+            String faceCode = "Face Code\t\t:\t" + faces.get(0);
+            outEvent.add(faceCode);
             output.setItems(outEvent);
 
-            String r = "Reg no\t\t\t:\t" + user.get(3);
-
-            outEvent.add(r);
-
+            String regCode = "Reg no\t\t\t:\t" + faces.get(3);
+            outEvent.add(regCode);
             output.setItems(outEvent);
-            String s = "Section\t\t\t:\t" + user.get(5);
 
-            outEvent.add(s);
-
+            String occupation = "Occupation\t\t\t:\t" + faces.get(5);
+            outEvent.add(occupation);
             output.setItems(outEvent);
 
 
         }
-
         count++;
-
         terminalLog("Face Recognition Activated, Put Your Face in the box!");
         stopRecBtn.setDisable(false);
 
@@ -316,7 +308,7 @@ public class SampleController {
         faceDetector.setIsRecFace(false);
         faceDetector.clearOutput();
 
-        this.user.clear();
+        this.faces.clear();
 
         recogniseBtn.setText("Recognise Face");
 
@@ -326,6 +318,9 @@ public class SampleController {
 
     }
 
+    /**
+     * take caption repeatedly
+     */
     @FXML
     protected void takeFiveCaption() {
         saveFace();
@@ -334,11 +329,7 @@ public class SampleController {
 
     @FXML
     protected void saveFace() {
-
-        //Input Validation
-        if (firstName.getText().trim().isEmpty() ||
-                reg.getText().trim().isEmpty() ||
-                code.getText().trim().isEmpty()) {
+        if (isValidatedForm()) {
 
             new Thread(() -> {
 
@@ -395,8 +386,10 @@ public class SampleController {
                     if (repeat < 1) {
                         saveBtn2.setDisable(true);
                         saveBtn.setDisable(true);
-                    }
 
+
+                    }
+                    Platform.runLater(() -> progressBar.setProgress(1 - repeat * 0.1));
                     Platform.runLater(() -> pb.setVisible(false));
 
 
@@ -413,18 +406,27 @@ public class SampleController {
 
     }
 
+    /**
+     * validate the input form, not null
+     *
+     * @return true if the form is validated
+     */
+    protected boolean isValidatedForm() {
+        return firstName.getText().trim().isEmpty() ||
+                reg.getText().trim().isEmpty() ||
+                code.getText().trim().isEmpty();
+    }
+
+    /**
+     * stop the webcam
+     */
     @FXML
-    protected void stopCam() throws SQLException {
-
+    protected void stopCam() {
         faceDetector.stop();
-
         startCam.setVisible(true);
         stopBtn.setVisible(false);
 
-        /* this.saveFace=true; */
-
         terminalLog("Cam Stream Stopped!");
-
         recogniseBtn.setDisable(true);
         saveBtn.setDisable(true);
         dataPane.setDisable(true);
@@ -432,14 +434,21 @@ public class SampleController {
 
         database.db_close();
         terminalLog("Database Connection Closed");
-        isDbReady = false;
+        isDatabaseReady = false;
     }
 
 
+    /**
+     * creating image view for the camera
+     *
+     * @param imageFile passed image file to be presented
+     * @return the image view after conversion to JavaFx type
+     */
     private ImageView createImageView(final File imageFile) {
 
         try {
-            final Image img = new Image(new FileInputStream(imageFile), 120, 0, true, true);
+            final Image img = new Image(new FileInputStream(imageFile),
+                    120, 0, true, true);
             imageView = new ImageView(img);
 
             imageView.setStyle("-fx-background-color: BLACK");
@@ -450,7 +459,7 @@ public class SampleController {
             imageView.setCache(true);
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            terminalLog(e.getMessage());
         }
 
         return imageView;

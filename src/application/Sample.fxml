@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.geometry.Rectangle2D?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.effect.Glow?>
@@ -40,27 +41,27 @@
                             </LinearGradient>
                         </textFill>
                     </Label>
-                    <ProgressIndicator fx:id="pb" layoutX="360.0" layoutY="156.0" progress="0.0" visible="false"/>
+                    <ProgressIndicator fx:id="pb" layoutX="360.0" layoutY="156.0" progress="0.0"
+                                       style="-fx-background-color: green;" visible="false"/>
                     <Label fx:id="warning" layoutX="141.0" layoutY="365.0" prefHeight="52.0" prefWidth="447.0"
                            style="-fx-background-color: #e53b24; -fx-background-radius: 14px;"
-                           text="  Warning: Name or Reg or Code Field Cannot Be empty !" textFill="WHITE"
-                           underline="true" visible="false">
+                           text="  Warning: Name or Reg or Code Field Cannot Be empty !" textAlignment="CENTER"
+                           textFill="WHITE" textOverrun="CENTER_ELLIPSIS" underline="true" visible="false">
                         <font>
-                            <Font name="Estrangelo Edessa" size="19.0"/>
+                            <Font name="System Bold Italic" size="16.0"/>
                         </font>
                     </Label>
                 </AnchorPane>
             </TitledPane>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="100.0" spacing="10.0" BorderPane.alignment="CENTER">
                 <Button fx:id="startCam" layoutX="3.0" layoutY="424.0" mnemonicParsing="false" onAction="#startCamera"
-                        prefHeight="60.0"
-                        prefWidth="199.0" styleClass="start_cam" stylesheets="@application.css"/>
+                        prefHeight="60.0" prefWidth="199.0" styleClass="start_cam" stylesheets="@application.css"/>
                 <Button fx:id="stopBtn" layoutX="7.0" layoutY="426.0" mnemonicParsing="false" onAction="#stopCam"
-                        prefHeight="55.0" prefWidth="101.0"
-                        styleClass="stop_cam" stylesheets="@application.css" text="Stop" visible="false"/>
+                        prefHeight="55.0" prefWidth="101.0" styleClass="stop_cam" stylesheets="@application.css"
+                        text="Stop" visible="false"/>
                 <Button id="save_face" fx:id="saveBtn" disable="true" layoutX="109.0" layoutY="425.0"
-                        mnemonicParsing="false"
-                        onAction="#saveFace" prefHeight="55.0" prefWidth="147.0" stylesheets="@application.css"/>
+                        mnemonicParsing="false" onAction="#saveFace" prefHeight="55.0" prefWidth="147.0"
+                        stylesheets="@application.css"/>
                 <Button fx:id="recogniseBtn" disable="true" layoutX="374.0" layoutY="423.0" mnemonicParsing="false"
                         onAction="#faceRecognise" prefHeight="55.0" prefWidth="158.0" styleClass="recognition"
                         stylesheets="@application.css">
@@ -118,8 +119,12 @@
                     <TextField fx:id="occupation" layoutX="96.0" layoutY="165.0" prefHeight="25.0" prefWidth="181.0"/>
                     <Separator layoutX="34.0" layoutY="33.0" prefHeight="6.0" prefWidth="239.0"/>
                     <Button fx:id="saveBtn2" alignment="CENTER" layoutX="90.0" layoutY="200.0"
-                            onAction="#takeFiveCaption" prefHeight="26.0"
-                            prefWidth="119.0" text="Save"/>
+                            onAction="#takeFiveCaption" prefHeight="26.0" prefWidth="119.0" text="Save"/>
+                    <ProgressBar fx:id="progressBar"  prefHeight="38.0" prefWidth="293.0" progress="0.0">
+                        <VBox.margin>
+                            <Insets top="10.0"/>
+                        </VBox.margin>
+                    </ProgressBar>
                 </VBox>
             </AnchorPane>
         </TitledPane>
