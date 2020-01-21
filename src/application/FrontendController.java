@@ -12,7 +12,6 @@ import javafx.scene.layout.AnchorPane;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.sql.SQLException;
 import java.time.Instant;
 import java.util.ArrayList;
 
@@ -20,7 +19,7 @@ import java.util.ArrayList;
  * @author Azeez G. Shola
  * @version 1.0
  */
-public class SampleController {
+public class FrontendController {
 
 
     /**
@@ -203,11 +202,9 @@ public class SampleController {
 
     /**
      * start camera live
-     *
-     * @throws SQLException when the database error occurs
      */
     @FXML
-    protected void startCamera() throws SQLException {
+    protected void startCamera() {
 
         faceDetector.init();
         faceDetector.setFrame(frame);
@@ -286,7 +283,7 @@ public class SampleController {
             outEvent.add(faceCode);
             output.setItems(outEvent);
 
-            String regCode = "Reg no\t\t\t:\t" + faces.get(3);
+            String regCode = "Reg no\t\t\t:\t" + faces.get(4);
             outEvent.add(regCode);
             output.setItems(outEvent);
 
@@ -382,8 +379,9 @@ public class SampleController {
 //                    code.setText("");
 //                    firstName.setText("");
 //                    lastName.setText("");
-                    database.insert(person);
-
+                    if (repeat < 1) {
+                        database.insert(person);
+                    }
                     Platform.runLater(() -> pb.setProgress(100));
 
 

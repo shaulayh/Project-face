@@ -20,17 +20,37 @@ import static org.bytedeco.javacpp.opencv_imgproc.*;
 import static org.bytedeco.javacpp.opencv_objdetect.*;
 
 /**
+ * face detector class use to  detect face , it implements the runnable class.
+ * get the connection to database
+ * and the face recognition class for extension
+ *
  * @author Azeez G. Shola
  * @version 1.0
  */
 public class FaceDetector implements Runnable {
 
+    /**
+     * database  object
+     */
     private Database database = new Database();
 
+    /**
+     * face recognition object
+     */
     private FaceRecognizer faceRecognizer = new FaceRecognizer();
 
+    /**
+     * frame converter ,image converter
+     */
     private OpenCVFrameConverter.ToIplImage grabberConverter = new OpenCVFrameConverter.ToIplImage();
+    /**
+     * frame converter
+     */
     private Java2DFrameConverter paintConverter = new Java2DFrameConverter();
+
+    /**
+     * list of output
+     */
     private ArrayList<String> output = new ArrayList<>();
 
 
@@ -42,37 +62,29 @@ public class FaceDetector implements Runnable {
     public boolean saveFace = false;
     public boolean isRecFace = false;
 
-    public boolean isEyeDetection = false;
-    public boolean isSmile = false;
     private boolean stop = false;
 
     private CvHaarClassifierCascade classifier = null;
-    private CvHaarClassifierCascade classifierEye = null;
     private CvHaarClassifierCascade classifierSideFace = null;
-    private CvHaarClassifierCascade classifierSmile = null;
-    private CvHaarClassifierCascade classifierEyeglass = null;
 
 
     public CvMemStorage storage = null;
     private FrameGrabber grabber = null;
-    private IplImage grabbedImage = null, temp, temp2, grayImage = null, smallImage = null;
-    public ImageView frames2;
+    private IplImage grabbedImage = null, temp, grayImage = null, smallImage = null;
+
     public ImageView frames;
 
 
     private CvSeq faces = null;
     private CvSeq eyes = null;
-    private CvSeq smile = null;
 
 
     int recogniseCode;
     public int code;
     public int reg;
-    public int age;
-
-    public String firstName; //first name
-    public String lastName; //last name
-    public String occupation; //section
+    public String firstName;
+    public String lastName;
+    public String occupation;
     public String name;
 
     private Person person = new Person();
@@ -80,23 +92,22 @@ public class FaceDetector implements Runnable {
     private TerminalMonitor terminalMonitor = TerminalMonitor.getInstance();
     private ArrayList<String> toPrintInTerminal = new ArrayList<>();
 
+    /**
+     * to load the classifiers and initialize  the face recognition
+     */
     public void init() {
         faceRecognizer.init();
-
         setClassifier("haar/haarcascade_frontalface_alt.xml");
         setClassifierSideFace("haar/haarcascade_profileface.xml");
-        setClassifierSmile("haar/haarcascade_smile.xml");
-
     }
 
+    /**
+     * start the face detection thread
+     */
     public void start() {
         try {
             new Thread(this).start();
         } catch (Exception e) {
-//            if (exception == null) {
-//                exception = e;
-//
-//            }
             terminalMonitor.addNewMessage(e.getMessage());
         }
     }
@@ -148,7 +159,6 @@ public class FaceDetector implements Runnable {
 
                 if (faces == null) {
                     cvClearMemStorage(storage);
-
                     //creating a temporary image
                     try {
                         temp = cvCreateImage(cvGetSize(grabbedImage), grabbedImage.depth(), grabbedImage.nChannels());
@@ -156,52 +166,17 @@ public class FaceDetector implements Runnable {
                         terminalMonitor.addNewMessage("the exception in case of error " + ex.getMessage());
                     }
 
-
                     cvCopy(grabbedImage, temp);
-
                     cvCvtColor(grabbedImage, grayImage, CV_BGR2GRAY);
                     cvResize(grayImage, smallImage, CV_INTER_AREA);
-
-
                     //face detection
                     try {
                         faces = cvHaarDetectObjects(smallImage, classifier, storage, 1.1, 3, CV_HAAR_DO_CANNY_PRUNING);
                     } catch (Exception ex) {
                         terminalMonitor.addNewMessage("Error with face detection " + ex.getMessage());
-
                     }
                     CvPoint org = null;
                     if (grabbedImage != null) {
-
-                        if (isEyeDetection) {        //eye detection logic
-                            eyes = cvHaarDetectObjects(smallImage, classifierEye, storage, 1.1, 3,
-                                    CV_HAAR_DO_CANNY_PRUNING);
-
-                            if (eyes.total() == 0) {
-                                eyes = cvHaarDetectObjects(smallImage, classifierEyeglass, storage, 1.1, 3,
-                                        CV_HAAR_DO_CANNY_PRUNING);
-
-                            }
-
-                            printResult(eyes, eyes.total(), regPerson);
-
-                        }
-
-                        if (isSmile) {
-                            try {
-                                smile = cvHaarDetectObjects(smallImage, classifierSmile, storage, 1.1, 3,
-                                        CV_HAAR_DO_CANNY_PRUNING);
-
-                                if (smile != null) {
-                                    printResult(smile, smile.total(), regPerson);
-                                }
-                            } catch (Exception e) {
-
-                                e.printStackTrace();
-                            }
-
-                        }
-
                         if (faces.total() == 0) {
                             faces = cvHaarDetectObjects(smallImage, classifierSideFace, storage, 1.1, 3,
                                     CV_HAAR_DO_CANNY_PRUNING);
@@ -215,7 +190,7 @@ public class FaceDetector implements Runnable {
 
                             for (int i = 0; i < totalFaces; i++) {
 
-                                //printing rectange box where face detected frame by frame
+                                //printing rectangle box where face detected frame by frame
                                 CvRect r = new CvRect(cvGetSeqElem(faces, i));
                                 regPerson.drawRect((r.x() * 4), (r.y() * 4), (r.width() * 4), (r.height() * 4));
 
@@ -229,14 +204,13 @@ public class FaceDetector implements Runnable {
                                     String names = "Searching!!!";
                                     this.recogniseCode = faceRecognizer.recognize(temp);
 
-                                    //getting recognised user from the database
-
+                                    //fetching information of recognize user from database
                                     if (recogniseCode != -1) {
                                         database.init();
-                                        ArrayList<String> user = new ArrayList<String>();
+                                        ArrayList<String> user;
                                         user = database.getUser(this.recogniseCode);
                                         this.output = user;
-                                        System.out.println("error " + this.output);
+                                        System.out.println("faces " + this.output);
                                         if (user.size() > 1) {
                                             names = user.get(1) + " " + user.get(2);
                                         }
@@ -250,8 +224,7 @@ public class FaceDetector implements Runnable {
 
                                 }
 
-                                if (saveFace) { //saving captured face to the disk
-                                    //keep it in mind that face code should be unique to each person
+                                if (saveFace) {
                                     String fName = "faces/" + code + "-" + firstName + "_" + lastName + "_" + count + ".jpg";
                                     cvSaveImage(fName, temp);
                                     count++;
@@ -263,42 +236,29 @@ public class FaceDetector implements Runnable {
 
                         WritableImage showFrame = SwingFXUtils.toFXImage(image, null);
 
-                        javafx.application.Platform.runLater(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                frames.setImage(showFrame);
-                            }
-                        });
+                        javafx.application.Platform.runLater(() -> frames.setImage(showFrame));
                     }
                     cvReleaseImage(temp);
                 }
 
             }
         } catch (Exception e) {
-//            e.printStackTrace();
-//            if (exception == null) {
-//                exception = e;
-//            }
             toPrintInTerminal.add(e.getMessage());
         }
     }
 
     public void stop() {
         stop = true;
-
         grabbedImage = grayImage = smallImage = null;
         if (grabber != null) {
             try {
                 grabber.stop();
             } catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
-
                 e.printStackTrace();
             }
             try {
                 grabber.release();
             } catch (org.bytedeco.javacv.FrameGrabber.Exception e) {
-
                 e.printStackTrace();
             }
         }
@@ -308,7 +268,6 @@ public class FaceDetector implements Runnable {
     public void setClassifier(String name) {
 
         try {
-
             setClassifierName(name);
             classifierFile = Loader.extractResource(classifierName, null, "classifier", ".xml");
 
@@ -325,51 +284,9 @@ public class FaceDetector implements Runnable {
             }
 
         } catch (Exception e) {
-//            if (exception == null) {
-//                exception = e;
-//
-//            }
             toPrintInTerminal.add(e.getMessage());
         }
 
-    }
-
-    public void setClassifierSmile(String name) {
-
-        try {
-            setClassifierName(name);
-            classifierFile = Loader.extractResource(classifierName, null, "classifier", ".xml");
-
-            if (classifierFile == null || classifierFile.length() <= 0) {
-                throw new IOException("Could not extract \"" + classifierName + "\" from Java resources.");
-            }
-
-            // Preload the opencv_objdetect module to work around a known bug.
-            Loader.load(opencv_objdetect.class);
-            classifierSmile = new CvHaarClassifierCascade(cvLoad(classifierFile.getAbsolutePath()));
-            classifierFile.delete();
-            if (classifier.isNull()) {
-                throw new IOException("Could not load the classifier file.");
-            }
-
-        } catch (Exception e) {
-//            if (exception == null) {
-//                exception = e;
-
-//            }
-            toPrintInTerminal.add(e.getMessage());
-        }
-
-
-    }
-
-    public void printResult(CvSeq data, int total, Graphics2D g2) {
-        for (int j = 0; j < total; j++) {
-            CvRect eye = new CvRect(cvGetSeqElem(eyes, j));
-
-            g2.drawOval((eye.x() * 4), (eye.y() * 4), (eye.width() * 4), (eye.height() * 4));
-
-        }
     }
 
     public void setClassifierSideFace(String name) {
@@ -391,16 +308,9 @@ public class FaceDetector implements Runnable {
             }
 
         } catch (Exception e) {
-//            if (exception == null) {
-//                exception = e;
-//            }
             toPrintInTerminal.add(e.getMessage());
         }
 
-    }
-
-    public String getClassifierName() {
-        return classifierName;
     }
 
     public void setClassifierName(String classifierName) {

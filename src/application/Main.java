@@ -30,16 +30,13 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            BorderPane root = FXMLLoader.load(getClass().getResource("Sample.fxml"));
+            BorderPane root = FXMLLoader.load(getClass().getResource("Frontend.fxml"));
             Scene scene = new Scene(root, 1350, 720);
 
             scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
             primaryStage.getIcons().add(new Image("logo-15.png"));
-            primaryStage.setTitle("Face  Recognization module");
-            Button buttonNavigate = new Button("Go to next");
+            primaryStage.setTitle("Face  Recognition module");
 
-
-            buttonNavigate.setOnAction(e -> primaryStage.setScene(SecondaryScene));
             primaryStage.setScene(scene);
             primaryStage.show();
         } catch (Exception e) {

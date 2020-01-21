@@ -74,7 +74,6 @@ public class FaceRecognizer {
             int label = Integer.parseInt(image.getName().split("-")[0]);
             images.put(counter, img);
             labelsBuf.put(counter, label);
-
             counter++;
         }
 
